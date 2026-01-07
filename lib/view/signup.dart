@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../services/auth_service.dart';
 import 'login.dart';
 import 'menu.dart';
@@ -62,6 +63,31 @@ class _SignupPageState extends State<SignupPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Erreur lors de l\'inscription. Essayez à nouveau.'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _signupWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    var user = await _authService.signInWithGoogle();
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (user != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MenuPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erreur lors de l\'inscription avec Google.'),
         ),
       );
     }
@@ -153,6 +179,29 @@ class _SignupPageState extends State<SignupPage> {
                             child: const Text(
                               'S\'inscrire',
                               style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                    const SizedBox(height: 20),
+                    const Text('Ou'),
+                    const SizedBox(height: 20),
+                    _isLoading
+                        ? const SizedBox()
+                        : ElevatedButton.icon(
+                            onPressed: _signupWithGoogle,
+                            icon: const FaIcon(
+                              FontAwesomeIcons.google,
+                              color: Colors.white,
+                            ),
+                            label: const Text('S\'inscrire avec Google'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 50,
+                                vertical: 15,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           ),
                     const SizedBox(height: 20),
